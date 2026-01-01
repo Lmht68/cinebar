@@ -1,4 +1,4 @@
-add_library(app_utils OBJECT)
+add_library(app_utils STATIC)
 
 target_sources(app_utils PRIVATE 
     # Headers

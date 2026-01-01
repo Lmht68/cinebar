@@ -18,7 +18,6 @@ int main(int argc, char *argv[])
             // Initialize spdlog
             app_logger::InitLogger();
             spdlog::info("Movie Barcode Generator starting...");
-            spdlog::info("Environment: Qt {} | OpenCV {}", QT_VERSION_STR, CV_VERSION);
 
             // Initialize and show main window
 

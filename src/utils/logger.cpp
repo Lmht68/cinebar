@@ -11,21 +11,24 @@
 #include <ctime>
 #include <chrono>
 
-static std::string GetCurrentTimestamp()
+namespace
 {
-    auto now = std::chrono::system_clock::now();
-    std::time_t t = std::chrono::system_clock::to_time_t(now);
+    std::string GetCurrentTimestamp()
+    {
+        auto now = std::chrono::system_clock::now();
+        std::time_t t = std::chrono::system_clock::to_time_t(now);
 
-    std::tm tm{};
+        std::tm tm{};
 #ifdef _WIN32
-    localtime_s(&tm, &t); // Windows-safe
+        localtime_s(&tm, &t); // Windows-safe
 #else
-    localtime_r(&t, &tm); // POSIX-safe
+        localtime_r(&t, &tm); // POSIX-safe
 #endif
 
-    std::ostringstream oss;
-    oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
-    return oss.str();
+        std::ostringstream oss;
+        oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
+        return oss.str();
+    }
 }
 
 namespace app_logger
