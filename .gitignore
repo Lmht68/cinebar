@@ -2,7 +2,7 @@
 .cache/
 
 # Local build scripts
-build_local.ps1
+*.ps1
 
 # CMake build directory
 build/
