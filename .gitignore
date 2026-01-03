@@ -1,4 +1,5 @@
 .vscode/
+.cache/
 
 # Local build scripts
 build_local.ps1
