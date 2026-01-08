@@ -2,9 +2,7 @@
 
 #include "central_widget.h"
 
-#include <QAction>
 #include <QMainWindow>
-#include <QObject>
 
 class QAction;
 

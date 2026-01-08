@@ -1,9 +1,9 @@
 #pragma once
 
-#include "barcode_view.h"
-
-#include <QSplitter>
 #include <QWidget>
+
+class QSplitter;
+class BarcodeView;
 
 class CentralWidget : public QWidget {
     Q_OBJECT

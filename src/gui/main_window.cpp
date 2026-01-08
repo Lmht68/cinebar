@@ -31,18 +31,19 @@ void MainWindow::InitMenuBar() {
     QMenu* menu_file = menuBar()->addMenu(tr("&File"));
 
     action_import_media_file_ = new QAction(tr("Import Media File…"), this);
-    connect(action_import_media_file_, &QAction::triggered, this, &MainWindow::ImportMediaFile);
     action_import_media_folder_ = new QAction(tr("Import Media Folder…"), this);
-    connect(action_import_media_folder_, &QAction::triggered, this, &MainWindow::ImportMediaFolder);
     action_export_barcode_image_ = new QAction(tr("Export Barcode Image…"), this);
+    action_import_metadata_ = new QAction(tr("Import Metadata…"), this);
+    action_export_metadata_ = new QAction(tr("Export Metadata…"), this);
+    action_save_metadata_ = new QAction(tr("Save Metadata"), this);
+
+    connect(action_import_media_file_, &QAction::triggered, this, &MainWindow::ImportMediaFile);
+    connect(action_import_media_folder_, &QAction::triggered, this, &MainWindow::ImportMediaFolder);
     connect(
         action_export_barcode_image_, &QAction::triggered, this, &MainWindow::ExportBarcodeImage
     );
-    action_import_metadata_ = new QAction(tr("Import Metadata…"), this);
     connect(action_import_metadata_, &QAction::triggered, this, &MainWindow::ImportMetadata);
-    action_export_metadata_ = new QAction(tr("Export Metadata…"), this);
     connect(action_export_metadata_, &QAction::triggered, this, &MainWindow::ExportMetadata);
-    action_save_metadata_ = new QAction(tr("Save Metadata"), this);
     connect(action_save_metadata_, &QAction::triggered, this, &MainWindow::SaveMetadata);
 
     menu_file->addAction(action_import_media_file_);
@@ -58,7 +59,6 @@ void MainWindow::InitMenuBar() {
 
     action_open_about_dialog_ = new QAction(tr("About"), this);
     connect(action_open_about_dialog_, &QAction::triggered, this, &MainWindow::OpenAboutDialog);
-
     help_menu->addAction(action_open_about_dialog_);
 }
 

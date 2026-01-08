@@ -1,5 +1,8 @@
 #include "barcode_view.h"
 
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
+
 BarcodeView::BarcodeView(QWidget *parent)
     : QGraphicsView(parent), scene_(new QGraphicsScene(this)), pixmap_item_(nullptr) {
     setScene(scene_);

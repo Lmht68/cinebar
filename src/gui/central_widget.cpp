@@ -1,5 +1,7 @@
+#include "barcode_view.h"
 #include "central_widget.h"
 
+#include <QSplitter>
 #include <QVBoxLayout>
 
 CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent) {

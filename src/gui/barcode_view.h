@@ -1,8 +1,9 @@
 #pragma once
 
-#include <QGraphicsPixmapItem>
-#include <QGraphicsScene>
 #include <QGraphicsView>
+
+class QGraphicsScene;
+class QGraphicsPixmapItem;
 
 class BarcodeView : public QGraphicsView {
     Q_OBJECT
