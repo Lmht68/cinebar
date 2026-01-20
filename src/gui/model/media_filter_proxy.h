@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GUI_MODEL_MEDIA_FILTER_PROXY_H_
+#define GUI_MODEL_MEDIA_FILTER_PROXY_H_
 
 #include <QFileSystemModel>
 #include <QSortFilterProxyModel>
@@ -19,3 +20,5 @@ protected:
 private:
     QFileSystemModel *fs_model_;
 };
+
+#endif

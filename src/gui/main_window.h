@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GUI_MAIN_WINDOW_H_
+#define GUI_MAIN_WINDOW_H_
 
 #include "gui/widget/central_widget.h"
 #include "gui/widget/file_browser_dock.h"
@@ -40,3 +41,5 @@ private slots:
 
     void DisplayImageFile(const QString& file_path);
 };
+
+#endif

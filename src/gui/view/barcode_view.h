@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GUI_VIEW_BARCODE_VIEW_H_
+#define GUI_VIEW_BARCODE_VIEW_H_
 
 #include <QGraphicsView>
 
@@ -28,3 +29,5 @@ private:
     double pixmap_scale_factor_;  // Tracks current zoom level
     QTimer *timer_zoom_;          // Debounce timer for high-quality render
 };
+
+#endif

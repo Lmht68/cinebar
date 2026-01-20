@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GUI_WIDGET_CENTRAL_WIDGET_H_
+#define GUI_WIDGET_CENTRAL_WIDGET_H_
 
 #include <QWidget>
 
@@ -16,3 +17,5 @@ private:
     QSplitter *splitter_widget_;
     BarcodeView *view_barcode_;
 };
+
+#endif

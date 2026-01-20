@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GUI_FILE_BROWSER_DOCK_H_
+#define GUI_FILE_BROWSER_DOCK_H_
 
 #include <QDockWidget>
 
@@ -36,3 +37,5 @@ private:
     QTreeView *view_tree_;
     QLabel *label_root_;
 };
+
+#endif

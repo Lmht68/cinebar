@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GUI_MODEL_FILE_BROWSER_MODEL_H_
+#define GUI_MODEL_FILE_BROWSER_MODEL_H_
 
 #include <QFileSystemModel>
 
@@ -10,3 +11,5 @@ public:
 
     [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
 };
+
+#endif

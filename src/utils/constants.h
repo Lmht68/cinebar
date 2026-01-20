@@ -1,4 +1,5 @@
-#pragma once
+#ifndef UTILS_CONSTANTS_H_
+#define UTILS_CONSTANTS_H_
 
 #include <QColor>
 #include <QLatin1String>
@@ -35,3 +36,5 @@ namespace DisplayConfig {
     constexpr double kDefaultRelativePos = 0.5;
     const QColor kBackgroundCanvasColor(30, 30, 30);
 }  // namespace DisplayConfig
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef UTILS_EXCEPTIONS_H_
+#define UTILS_EXCEPTIONS_H_
+
 #include <stdexcept>
 #include <string>
 
@@ -12,3 +15,5 @@ namespace AppException {
         explicit StyleInitException(const std::string& message) : std::runtime_error(message) {}
     };
 }  // namespace AppException
+
+#endif
