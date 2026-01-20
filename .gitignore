@@ -12,4 +12,6 @@ data/
 logs/
 
 # AI
+AGENTS.md
 GEMINI.md
+.opencode/
