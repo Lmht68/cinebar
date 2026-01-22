@@ -16,8 +16,6 @@
 
 int main(int argc, char *argv[]) {
     try {
-        // Forces Qt to read and use system palette on Windows
-        // qputenv("QT_QPA_PLATFORM", "windows:darkmode=2");
         // Tell Qt to handle scaling, not the OS
         QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
         // Ensure pixmaps use the high-res versions

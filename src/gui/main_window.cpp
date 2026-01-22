@@ -55,7 +55,7 @@ void MainWindow::InitMenuBar() {
     // View menu
     QMenu* menu_view = menuBar()->addMenu(tr("&View"));
 
-    QAction* action_toggle_theme = menu_view->addAction(tr("Toggle Dark Mode"));
+    QAction* action_toggle_theme = menu_view->addAction(tr("Dark Mode"));
     action_toggle_theme->setCheckable(true);
 
     action_toggle_theme->setChecked(this->palette().window().color().value() < 128);
