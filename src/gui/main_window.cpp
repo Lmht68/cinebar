@@ -4,6 +4,7 @@
 #include "utils/logger.h"
 
 #include <QAction>
+#include <QApplication>
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QGuiApplication>
@@ -55,7 +56,9 @@ void MainWindow::InitMenuBar() {
 
     action_open_about_dialog_ = new QAction(tr("About"), this);
     connect(action_open_about_dialog_, &QAction::triggered, this, &MainWindow::OpenAboutDialog);
+
     help_menu->addAction(action_open_about_dialog_);
+    help_menu->addAction(tr("About &Qt"), this, &QApplication::aboutQt);
 }
 
 void MainWindow::InitFileBrowserDockWidget() {
