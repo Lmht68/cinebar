@@ -24,7 +24,7 @@
 Optional:
 - Qt OpenGLWidgets or FFmpeg for media processing
 
-### Clone & Build
+### Build
 
 ```bash
 git clone https://github.com/your-username/CineBar.git
