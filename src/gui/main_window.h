@@ -15,8 +15,8 @@ public:
     explicit MainWindow();
 
 private:
-    CentralWidget* central_widget_;
-    FileBrowserDock* file_browser_dock_;
+    CentralWidget* widget_central_;
+    FileBrowserDock* dock_file_browser_;
     QAction* action_import_media_file_;
     QAction* action_import_media_folder_;
     QAction* action_export_barcode_image_;

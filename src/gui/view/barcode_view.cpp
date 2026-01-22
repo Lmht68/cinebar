@@ -12,11 +12,11 @@
 
 BarcodeView::BarcodeView(QWidget *parent)
     : QGraphicsView(parent),
-      scene_(new QGraphicsScene(this)),
+      scene_graphics_(new QGraphicsScene(this)),
       pixmap_item_(nullptr),
       pixmap_scale_factor_(display_config::kDefaultScale) {
     setViewport(new QOpenGLWidget());
-    setScene(scene_);
+    setScene(scene_graphics_);
     // UI Setup
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     setDragMode(QGraphicsView::ScrollHandDrag);
@@ -85,8 +85,8 @@ void BarcodeView::UpdateHighQualityPixmap() {
     if (pixmap_src_.isNull()) return;
 
     // Capture relative look-at point to maintain view focus after resample
-    const double scene_w = scene_->width();
-    const double scene_h = scene_->height();
+    const double scene_w = scene_graphics_->width();
+    const double scene_h = scene_graphics_->height();
     double rel_x = display_config::kDefaultRelativePos;
     double rel_y = display_config::kDefaultRelativePos;
 
@@ -107,17 +107,17 @@ void BarcodeView::UpdateHighQualityPixmap() {
 
     if (!pixmap_item_) {
         pixmap_item_ = new QGraphicsPixmapItem();
-        scene_->addItem(pixmap_item_);
+        scene_graphics_->addItem(pixmap_item_);
     }
 
     pixmap_item_->setPixmap(high_qual);
-    scene_->setSceneRect(high_qual.rect());
+    scene_graphics_->setSceneRect(high_qual.rect());
     // Synchronize view
     resetTransform();
 
     // Re-center view on the same relative image coordinates
-    const double target_x = rel_x * scene_->width();
-    const double target_y = rel_y * scene_->height();
+    const double target_x = rel_x * scene_graphics_->width();
+    const double target_y = rel_y * scene_graphics_->height();
 
     if (!std::isnan(target_x) && !std::isnan(target_y)) {
         centerOn(target_x, target_y);

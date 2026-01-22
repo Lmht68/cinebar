@@ -59,25 +59,25 @@ void MainWindow::InitMenuBar() {
 }
 
 void MainWindow::InitFileBrowserDockWidget() {
-    file_browser_dock_ = new FileBrowserDock(this);
-    file_browser_dock_->setFeatures(
+    dock_file_browser_ = new FileBrowserDock(this);
+    dock_file_browser_->setFeatures(
         QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable
     );
 
     connect(
-        file_browser_dock_, &FileBrowserDock::RequestOpenFolder, this,
+        dock_file_browser_, &FileBrowserDock::RequestOpenFolder, this,
         &MainWindow::ImportMediaFolder
     );
     connect(
-        file_browser_dock_, &FileBrowserDock::FileSelected, this, &MainWindow::DisplayImageFile
+        dock_file_browser_, &FileBrowserDock::FileSelected, this, &MainWindow::DisplayImageFile
     );
 
-    addDockWidget(Qt::LeftDockWidgetArea, file_browser_dock_);
+    addDockWidget(Qt::LeftDockWidgetArea, dock_file_browser_);
 }
 
 void MainWindow::InitCentralWidget() {
-    central_widget_ = new CentralWidget(this);
-    setCentralWidget(central_widget_);
+    widget_central_ = new CentralWidget(this);
+    setCentralWidget(widget_central_);
 }
 
 // ===== Slots =====
@@ -85,7 +85,7 @@ void MainWindow::InitCentralWidget() {
 void MainWindow::ImportMediaFolder() {
     const QString folder = QFileDialog::getExistingDirectory(this, tr("Import Media Folder"));
     if (folder.isEmpty()) return;
-    file_browser_dock_->OpenFolder(folder);
+    dock_file_browser_->OpenFolder(folder);
 }
 
 void MainWindow::ExportBarcodeImage() {
@@ -140,5 +140,5 @@ void MainWindow::DisplayImageFile(const QString& file_path) {
         return;
     }
 
-    central_widget_->DisplayBarcode(pixmap);
+    widget_central_->DisplayBarcode(pixmap);
 }

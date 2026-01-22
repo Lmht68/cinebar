@@ -22,7 +22,7 @@ private slots:
     void UpdateHighQualityPixmap();
 
 private:
-    QGraphicsScene *scene_;
+    QGraphicsScene *scene_graphics_;
     QGraphicsPixmapItem *pixmap_item_;
 
     QPixmap pixmap_src_;          // Original high-res image

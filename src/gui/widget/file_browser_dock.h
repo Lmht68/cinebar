@@ -29,8 +29,8 @@ private slots:
     void OnItemClicked(const QModelIndex &index);
 
 private:
-    FileBrowserModel *model_file_system_;
-    MediaFilterProxy *media_proxy_model_;
+    FileBrowserModel *model_file_browser_;
+    MediaFilterProxy *proxy_media_filter_;
 
     QStackedWidget *widget_stacked_;
     QPushButton *btn_open_folder_;
