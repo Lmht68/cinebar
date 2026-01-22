@@ -1,13 +1,19 @@
-QDockWidget QLabel#dockTitle {
+QDockWidget QLabel#labelDockTitle {
     font-weight: bold;
     font-style: italic;
     font-size: 11px;
 }
 
-QDockWidget QLabel#fsTreeRoot {
+QDockWidget QLabel#labelFsTreeRoot {
     font-weight: bold;
 }
 
 QDockWidget QPushButton#btnSelectFolder {
     padding: 6px;
+}
+
+QGraphicsView {
+    background-color: #1E1E1E;
+    border: none;
+    border-radius: 0px;
 }

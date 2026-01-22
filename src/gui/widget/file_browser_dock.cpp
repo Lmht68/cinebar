@@ -22,7 +22,7 @@ FileBrowserDock::FileBrowserDock(QWidget *parent)
       label_root_(new QLabel("", this)) {
     setAllowedAreas(Qt::LeftDockWidgetArea);
     auto *dock_title_label = new QLabel(tr("EXPLORER"), this);
-    dock_title_label->setObjectName("dockTitle");
+    dock_title_label->setObjectName("labelDockTitle");
     dock_title_label->setContentsMargins(8, 4, 0, 0);
     dock_title_label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     setTitleBarWidget(dock_title_label);
@@ -47,7 +47,7 @@ FileBrowserDock::FileBrowserDock(QWidget *parent)
     layout_fs_header->setAlignment(Qt::AlignLeft);
     auto *label_root_icon = new QLabel(this);
     label_root_icon->setPixmap(QFileIconProvider().icon(QFileIconProvider::Folder).pixmap(16, 16));
-    label_root_->setObjectName("fsTreeRoot");
+    label_root_->setObjectName("labelFsTreeRoot");
     layout_fs_header->addWidget(label_root_icon);
     layout_fs_header->addWidget(label_root_);
     layout_fs_tree->addWidget(widget_fs_header);

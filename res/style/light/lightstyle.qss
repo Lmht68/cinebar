@@ -920,7 +920,7 @@ QTextBrowser:hover, QTextBrowser:!hover, QTextBrowser:selected, QTextBrowser:pre
 /* QGraphicsView ----------------------------------------------------------
 
 --------------------------------------------------------------------------- */
-QGraphicsView {
+/* QGraphicsView {
   background-color: #FAFAFA;
   border: 1px solid #C0C4C8;
   color: #19232D;
@@ -936,7 +936,7 @@ QGraphicsView:disabled {
 
 QGraphicsView:hover, QGraphicsView:!hover, QGraphicsView:selected, QGraphicsView:pressed {
   border: 1px solid #C0C4C8;
-}
+} */
 
 /* QCalendarWidget --------------------------------------------------------
 
