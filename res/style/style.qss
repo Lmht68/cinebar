@@ -1,7 +1,6 @@
 QDockWidget QLabel#labelDockTitle {
     font-weight: bold;
     font-style: italic;
-    font-size: 11px;
 }
 
 QDockWidget QLabel#labelFsTreeRoot {

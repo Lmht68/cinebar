@@ -1,5 +1,6 @@
 #include "gui/widget/file_browser_dock.h"
 
+#include "gui/gui_helper.h"
 #include "gui/model/file_browser_model.h"
 #include "gui/model/media_filter_proxy.h"
 #include "utils/constants.h"
@@ -40,17 +41,13 @@ FileBrowserDock::FileBrowserDock(QWidget *parent)
 
     auto *widget_fs_tree = new QWidget(this);
     auto *layout_fs_tree = new QVBoxLayout(widget_fs_tree);
-    auto *widget_fs_header = new QWidget(this);
-    auto *layout_fs_header = new QHBoxLayout(widget_fs_header);
-    layout_fs_header->setContentsMargins(0, 0, 0, 0);
-    layout_fs_header->setSpacing(1);
-    layout_fs_header->setAlignment(Qt::AlignLeft);
-    auto *label_root_icon = new QLabel(this);
-    label_root_icon->setPixmap(QFileIconProvider().icon(QFileIconProvider::Folder).pixmap(16, 16));
-    label_root_->setObjectName("labelFsTreeRoot");
-    layout_fs_header->addWidget(label_root_icon);
-    layout_fs_header->addWidget(label_root_);
-    layout_fs_tree->addWidget(widget_fs_header);
+    layout_fs_tree->setSpacing(0);
+
+    layout_fs_tree->addLayout(
+        gui_helper::CreateLabelIconGrp(
+            label_root_, 16, QFileIconProvider::Folder, "labelFsTreeRoot"
+        )
+    );
     layout_fs_tree->addWidget(view_tree_);
     widget_stacked_->addWidget(widget_fs_tree);
 

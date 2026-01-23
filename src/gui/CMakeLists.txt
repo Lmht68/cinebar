@@ -1,6 +1,9 @@
-add_library(app_gui STATIC
+add_library(app_gui STATIC)
+
+target_sources(app_gui PRIVATE 
     # Headers
     main_window.h
+    gui_helper.h
     widget/central_widget.h
     widget/file_browser_dock.h
     view/barcode_view.h

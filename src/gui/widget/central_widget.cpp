@@ -1,5 +1,6 @@
 #include "gui/widget/central_widget.h"
 
+#include "gui/gui_helper.h"
 #include "gui/view/barcode_view.h"
 
 #include <QHBoxLayout>
@@ -39,22 +40,15 @@ CentralWidget::CentralWidget(QWidget* parent) : QWidget(parent) {
     label_image_dimension_->setObjectName("labelViewInfo");
     btn_fit_to_screen_->setObjectName("btnViewInfo");
 
-    // Create a helper function or block to handle the label + icon grouping
-    auto createInfoGroup =
-        [this](QHBoxLayout* layout_parent, QLabel* label, const QString& icon_path) {
-            auto* layout_grp = new QHBoxLayout();
-            layout_grp->setSpacing(1);
-            auto* label_icon = new QLabel(this);
-            label_icon->setObjectName("labelIcon");
-            label_icon->setPixmap(QIcon(icon_path).pixmap(18, 18));
-            layout_grp->addWidget(label_icon);
-            layout_grp->addWidget(label);
-            layout_parent->addLayout(layout_grp);
-        };
-
-    createInfoGroup(layout_view_info, label_image_dimension_, ":/icons/dimension.png");
+    layout_view_info->addLayout(
+        gui_helper::CreateLabelIconGrp(
+            label_image_dimension_, 18, ":/icons/dimension.png", "labelIcon"
+        )
+    );
     layout_view_info->addStretch();
-    createInfoGroup(layout_view_info, label_zoom_level_, ":/icons/zoom.png");
+    layout_view_info->addLayout(
+        gui_helper::CreateLabelIconGrp(label_zoom_level_, 18, ":/icons/zoom.png", "labelIcon")
+    );
     layout_view_info->addWidget(btn_fit_to_screen_);
 
     connect(btn_fit_to_screen_, &QPushButton::clicked, this, &CentralWidget::OnFitToScreenClicked);
