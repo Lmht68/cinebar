@@ -1,1 +1,1 @@
-# cinebar-generator
+# Cinebar Generator
