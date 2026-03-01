@@ -13,4 +13,5 @@ target_sources(app_utils PRIVATE
 
 target_include_directories(app_utils PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
-target_link_libraries(app_utils PUBLIC spdlog::spdlog)
+target_link_libraries(app_utils PUBLIC spdlog::spdlog
+                                PRIVATE opencv_core)
