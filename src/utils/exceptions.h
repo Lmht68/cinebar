@@ -5,14 +5,19 @@
 #include <string>
 
 namespace app_exception {
-    class LoggerInitException : public std::runtime_error {
+    class AppException : public std::runtime_error {
     public:
-        explicit LoggerInitException(const std::string& message) : std::runtime_error(message) {}
+        explicit AppException(const std::string& message) : std::runtime_error(message) {}
     };
 
-    class StyleInitException : public std::runtime_error {
+    class LoggerInitException : public AppException {
     public:
-        explicit StyleInitException(const std::string& message) : std::runtime_error(message) {}
+        using AppException::AppException;
+    };
+
+    class StyleInitException : public AppException {
+    public:
+        using AppException::AppException;
     };
 }  // namespace app_exception
 
