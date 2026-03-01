@@ -134,19 +134,7 @@ ForEachMacros:
   - BOOST_FOREACH
 IfMacros:
   - KJ_IF_MAYBE
-IncludeBlocks: Regroup
-IncludeCategories:
-  - Regex: '^"([^/]*)\.h"'
-    Priority: 0
-    CaseSensitive: false
-  - Regex: '^".*"'
-    Priority: 10
-    CaseSensitive: false
-  - Regex: "^<.*[A-Z/].*"
-    Priority: 20
-    CaseSensitive: true
-  - Regex: "^<.*"
-    Priority: 30
+IncludeBlocks: Preserve
 IncludeIsMainRegex: "([-_](test|unittest))?$"
 IncludeIsMainSourceRegex: ""
 IndentAccessModifiers: false
@@ -241,7 +229,7 @@ RequiresExpressionIndentation: OuterScope
 SeparateDefinitionBlocks: Leave
 ShortNamespaceLines: 1
 SkipMacroDefinitionBody: false
-SortIncludes: CaseSensitive
+SortIncludes: false
 SortJavaStaticImport: Before
 SortUsingDeclarations: LexicographicNumeric
 SpaceAfterCStyleCast: false
@@ -300,4 +288,3 @@ WhitespaceSensitiveMacros:
   - PP_STRINGIZE
   - STRINGIZE
 ---
-

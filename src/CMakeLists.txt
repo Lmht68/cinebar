@@ -9,8 +9,7 @@ add_executable(${APP_TARGET}
 target_link_libraries(${APP_TARGET} PRIVATE 
     app_utils
     app_gui
-    Qt6::Widgets 
-    ${OpenCV_LIBS}
+    Qt6::Widgets
 )
 
 # Set UI properties for Windows

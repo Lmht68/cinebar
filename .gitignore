@@ -10,7 +10,3 @@ build/
 # Data & log files
 data/
 logs/
-
-# AI
-AGENTS.md
-.opencode/
