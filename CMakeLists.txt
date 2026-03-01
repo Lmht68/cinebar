@@ -2,6 +2,8 @@
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.10)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -11,11 +13,18 @@ endif()
 
 project ("cinebar-generator")
 
+# Add packages
+find_package(spdlog REQUIRED)
+find_package(CLI11 REQUIRED)
+find_package(OpenCV REQUIRED)
+
 # Add source to this project's executable.
-add_executable (cinebar-generator "cinebar-generator.cpp" "cinebar-generator.h")
+add_executable (cinebar-generator "cinebar-generator.cpp"  "logger.h" "logger.cpp"  "parser.h" "parser.cpp")
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET cinebar-generator PROPERTY CXX_STANDARD 20)
-endif()
+# Install targets.
+target_link_libraries(cinebar-generator PRIVATE
+	spdlog::spdlog
+	CLI11::CLI11
+	${OpenCV_LIBS})
 
-# TODO: Add tests and install targets if needed.
+# TODO: Add tests 
