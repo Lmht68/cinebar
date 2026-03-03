@@ -60,11 +60,11 @@ namespace
     }
 
     void OpenCvSpdlogBridge(cv::utils::logging::LogLevel level,
-        const char* tag,
-        const char* file,
-        int line,
-        const char* func,
-        const char* message)
+                            const char *tag,
+                            const char *file,
+                            int line,
+                            const char *func,
+                            const char *message)
     {
         std::string formatted = "[OpenCV] ";
 
@@ -115,7 +115,7 @@ namespace app_logger
 
             // Delete old logs
 #ifndef NDEBUG
-            DeleteOldLogs("logs", std::chrono::seconds(1)); // 1 second for debug builds
+            DeleteOldLogs("logs", std::chrono::seconds(1));
 #else
             DeleteOldLogs("logs",
                           std::chrono::hours(24 * 7)); // 7 days for release builds
@@ -143,7 +143,7 @@ namespace app_logger
             spdlog::flush_every(std::chrono::seconds(10));
             // Flush on Warning to ensure logs are saved if app crashes
             spdlog::flush_on(spdlog::level::warn);
-            spdlog::info("Logger initialized.");
+            spdlog::info("logger: spdlog initialized.");
             // Redirect OpenCV log to spdlog
             cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_INFO);
             cv::utils::logging::internal::replaceWriteLogMessageEx(OpenCvSpdlogBridge);
@@ -151,17 +151,17 @@ namespace app_logger
         catch (const spdlog::spdlog_ex &e)
         {
             throw std::runtime_error(
-                std::string("logger:spdlog initialization failed: ") + e.what());
+                std::string("logger: spdlog initialization failed: ") + e.what());
         }
         catch (const std::filesystem::filesystem_error &e)
         {
             throw std::runtime_error(
-                std::string("logger:Failed to create logs directory: ") + e.what());
+                std::string("logger: Failed to create logs directory: ") + e.what());
         }
         catch (const std::exception &e)
         {
             throw std::runtime_error(
-                std::string("logger:Failed to initialize logger: ") + e.what());
+                std::string("logger: Failed to initialize logger: ") + e.what());
         }
     }
 } // namespace app_logger

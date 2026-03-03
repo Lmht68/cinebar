@@ -19,7 +19,14 @@ find_package(CLI11 REQUIRED)
 find_package(OpenCV REQUIRED)
 
 # Add source to this project's executable.
-add_executable (cinebar-generator "cinebar-generator.cpp"  "logger.h" "logger.cpp"  "parser.h" "parser.cpp")
+add_executable (cinebar-generator 
+	"src/cinebar-generator.cpp"  
+	"src/logger.h" 
+	"src/logger.cpp"  
+	"src/parser.h" 
+	"src/parser.cpp" 
+	"src/video_processor.h" 
+	"src/video_processor.cpp")
 
 # Install targets.
 target_link_libraries(cinebar-generator PRIVATE
