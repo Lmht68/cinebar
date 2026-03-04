@@ -11,6 +11,8 @@ namespace app_parser
 	{
 		std::string input_video_path;
 		std::string output_img_path;
+		double interval = 0.0;
+		int nframes = 0;
 		bool show_info = false;
 	};
 

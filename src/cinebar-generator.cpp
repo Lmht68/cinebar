@@ -3,6 +3,7 @@
 
 #include "parser.h"
 #include "logger.h"
+#include "video_processor.h"
 
 #include <opencv2/opencv.hpp>
 
@@ -33,6 +34,20 @@ int main(int argc, char **argv)
                          CLI11_VERSION_PATCH);
             return 0;
         }
+        auto video_info = app_video_processor::LoadVideoInfo(args.input_video_path);
+
+        if (args.interval > 0.0)
+        {
+            args.nframes = app_video_processor::NframesFromInterval(video_info, args.interval);
+        }
+        else if (args.nframes <= 0)
+        {
+            args.nframes = video_info.frame_count; // Sample all frames if no interval is specified
+        }
+
+        spdlog::info("input video: {}", args.input_video_path);
+        spdlog::info("interval: {} seconds", args.interval);
+        spdlog::info("nframes to sample: {}", args.nframes);
     }
     catch (const CLI::ParseError &pe)
     {

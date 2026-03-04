@@ -17,6 +17,7 @@ project ("cinebar-generator")
 find_package(spdlog REQUIRED)
 find_package(CLI11 REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(GTest REQUIRED)
 
 # Add source to this project's executable.
 add_executable (cinebar-generator 
@@ -32,6 +33,21 @@ add_executable (cinebar-generator
 target_link_libraries(cinebar-generator PRIVATE
 	spdlog::spdlog
 	CLI11::CLI11
-	${OpenCV_LIBS})
+	${OpenCV_LIBS}
+)
 
-# TODO: Add tests 
+# Add tests
+enable_testing()
+
+add_executable(cinebar-generator-tests
+    "tests/test_video_processor.cpp"
+	"src/video_processor.cpp"
+)
+
+target_link_libraries(cinebar-generator-tests PRIVATE
+    GTest::gtest_main
+    ${OpenCV_LIBS}
+)
+
+include(GoogleTest)
+gtest_discover_tests(cinebar-generator-tests)

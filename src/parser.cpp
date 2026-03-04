@@ -10,8 +10,21 @@ namespace app_parser
 		app.add_flag("-v,--version", args.show_info, "Display application version info");
 		app.add_option("input", args.input_video_path, "Input video file")->check(CLI::ExistingFile);
 		app.add_option("-o,--output", args.output_img_path, "Output barcode image filename. If not provided, a name will be automatically generated.");
+		auto interval_opt = app.add_option("-i,--interval", args.interval, "Frame sampling interval in seconds")->check(CLI::PositiveNumber);
+		auto nframes_opt = app.add_option("-n,--nframes", args.nframes, "Number of frames to sample in the visualization")->check(CLI::PositiveNumber);
 
 		app.parse(argc, argv);
+
+		bool interval_set = interval_opt->count() > 0;
+		bool nframes_set = nframes_opt->count() > 0;
+
+		if (interval_set && nframes_set)
+		{
+			throw CLI::ValidationError(
+				"parser: Sampling options conflict: "
+				"choose either --interval (time-based) "
+				"or --nframes (fixed-count), but not both.");
+		}
 
 		if (!args.show_info && args.input_video_path.empty())
 		{
