@@ -62,6 +62,56 @@ int main(int argc, char **argv)
         spdlog::info("width: {}", args.width);
         spdlog::info("height: {}", args.height);
         spdlog::info("trim letterboxing and end credits: {}", args.trim ? "yes" : "no");
+
+        cv::VideoCapture cap(args.input_video_path);
+        if (!cap.isOpened())
+        {
+            std::cerr << "Cannot open video: " << args.input_video_path << "\n";
+            return 1;
+        }
+
+        cv::Mat frame;
+        int frame_index = 0;
+
+        while (cap.read(frame))
+        {
+            frame_index++;
+            cv::Mat gray;
+            cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+            auto bounds = app_video_processor::DetectBounds(gray);
+            if (!bounds)
+                continue;
+            std::cout << "Bounds detected on frame " << frame_index << "\n";
+            std::cout << "left=" << bounds->left
+                      << " top=" << bounds->top
+                      << " right=" << bounds->right
+                      << " bottom=" << bounds->bottom
+                      << std::endl;
+            // draw rectangle
+            cv::rectangle(
+                frame,
+                cv::Point(bounds->left, bounds->top),
+                cv::Point(bounds->right, bounds->bottom),
+                cv::Scalar(0, 255, 0),
+                3);
+            // show cropped image too
+            cv::Rect roi(
+                bounds->left,
+                bounds->top,
+                bounds->right - bounds->left,
+                bounds->bottom - bounds->top);
+            cv::Mat cropped = frame(roi);
+            cv::imshow("Detected Frame", frame);
+            cv::imshow("Cropped", cropped);
+
+            cv::waitKey(0);
+            break;
+        }
+
+        if (frame.empty())
+        {
+            std::cout << "No bounds detected in video\n";
+        }
     }
     catch (const CLI::ParseError &pe)
     {
