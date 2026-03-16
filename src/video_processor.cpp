@@ -7,6 +7,7 @@
 
 namespace app_video_processor
 {
+    // --- Video Info
     VideoInfo LoadVideoInfo(const std::string &video_path)
     {
         cv::VideoCapture video(video_path, cv::CAP_FFMPEG);
@@ -48,7 +49,9 @@ namespace app_video_processor
 
         return GetFrameCountFromInterval(video_info.frame_count, video_info.fps, interval);
     }
+    // ---
 
+    // --- Handle Letterbox: black bars on top and bottom, Pillarbox: black bars on left and right
     std::optional<VideoBounds> DetectBounds(const cv::Mat &frame_grayed,
                                             int threshold,
                                             double min_black_ratio)
@@ -119,18 +122,23 @@ namespace app_video_processor
         return bounds;
     }
 
-    bool DetermineVideoBounds(const std::string &source,
+    cv::Mat CropImage(const cv::Mat &frame, const VideoBounds &bounds)
+    {
+        cv::Rect roi(
+            bounds.left,
+            bounds.top,
+            bounds.right - bounds.left,
+            bounds.bottom - bounds.top);
+
+        return frame(roi);
+    }
+
+    bool DetermineVideoBounds(VideoInfo &video_info,
                               VideoBounds &bounds,
                               int n_samples)
     {
-        cv::VideoCapture cap(source);
-
-        if (!cap.isOpened())
-            throw std::runtime_error("video_processor: Cannot open video for trimming: " + source);
-
-        int totalFrames = static_cast<int>(
-            cap.get(cv::CAP_PROP_FRAME_COUNT));
-
+        cv::VideoCapture &cap = video_info.capture;
+        int totalFrames = video_info.frame_count;
         double interval = static_cast<double>(totalFrames) / n_samples;
         std::vector<VideoBounds> detections;
         cv::Mat frame;
@@ -139,20 +147,21 @@ namespace app_video_processor
         {
             int frame_id = static_cast<int>((i + 0.5) * interval);
             cap.set(cv::CAP_PROP_POS_FRAMES, frame_id);
+
             if (!cap.read(frame))
                 continue;
-            cv::Mat frame_grayed;
-            cv::cvtColor(frame, frame_grayed, cv::COLOR_BGR2GRAY);
-            auto bounds = DetectBounds(frame_grayed);
-            if (bounds)
-                detections.push_back(*bounds);
+
+            cv::Mat gray;
+            cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+            auto detected = DetectBounds(gray);
+
+            if (detected)
+                detections.push_back(*detected);
         }
 
-        cap.release();
         if (detections.empty())
             return false;
 
-        // collect arrays for median
         std::vector<int> lefts, tops, rights, bottoms;
 
         for (auto &b : detections)
@@ -174,23 +183,39 @@ namespace app_video_processor
             median(tops),
             median(rights),
             median(bottoms)};
+
         int crop_w = median_bounds.right - median_bounds.left;
         int crop_h = median_bounds.bottom - median_bounds.top;
-        if (crop_w > frame.cols * kMinCropRatio && crop_h > frame.rows * kMinCropRatio)
+
+        if (crop_w > video_info.width * kMinCropRatio &&
+            crop_h > video_info.height * kMinCropRatio)
             return false;
 
         bounds = median_bounds;
         return true;
     }
 
-    cv::Mat CropImage(const cv::Mat &frame, const VideoBounds &bounds)
+    void DetectVideoBoxType(VideoInfo &video_info, int n_samples)
     {
-        cv::Rect roi(
-            bounds.left,
-            bounds.top,
-            bounds.right - bounds.left,
-            bounds.bottom - bounds.top);
+        VideoBounds bounds;
 
-        return frame(roi);
+        if (!DetermineVideoBounds(video_info, bounds, n_samples))
+            return;
+
+        video_info.bounds = bounds;
+        int crop_w = bounds.right - bounds.left;
+        int crop_h = bounds.bottom - bounds.top;
+        bool letterbox = crop_h < video_info.height;
+        bool pillarbox = crop_w < video_info.width;
+
+        if (letterbox && pillarbox)
+            video_info.box_type = BoxType::Windowbox;
+        else if (letterbox)
+            video_info.box_type = BoxType::Letterbox;
+        else if (pillarbox)
+            video_info.box_type = BoxType::Pillarbox;
+        else
+            video_info.box_type = BoxType::None;
     }
+    // ---
 }

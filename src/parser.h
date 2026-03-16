@@ -13,6 +13,19 @@ namespace app_parser
 		Circular
 	};
 
+	inline const char *ToString(app_parser::BarcodeShape shape)
+	{
+		switch (shape)
+		{
+		case app_parser::BarcodeShape::Horizontal:
+			return "Horizontal";
+		case app_parser::BarcodeShape::Circular:
+			return "Circular";
+		default:
+			return "Unknown";
+		}
+	}
+
 	const std::map<std::string, app_parser::BarcodeShape> kArgShapeMap{
 		{"horizontal", app_parser::BarcodeShape::Horizontal},
 		{"circular", app_parser::BarcodeShape::Circular}};

@@ -9,19 +9,6 @@
 
 namespace app_video_processor
 {
-	struct VideoInfo
-	{
-		cv::VideoCapture capture;
-		int frame_count;
-		double fps;
-		int width;
-		int height;
-	};
-
-	VideoInfo LoadVideoInfo(const std::string &video_path);
-	int GetFrameCountFromInterval(int frame_count, double fps, double interval);
-	int NframesFromInterval(const VideoInfo &video_info, double interval);
-
 	// Represents the detected bounds of the actual video content, excluding letterboxing
 	struct VideoBounds
 	{
@@ -30,16 +17,59 @@ namespace app_video_processor
 		int right;
 		int bottom;
 	};
+	enum class BoxType
+	{
+		None,
+		Letterbox,
+		Pillarbox,
+		Windowbox
+	};
+	inline const char *ToString(app_video_processor::BoxType type)
+	{
+		switch (type)
+		{
+		case app_video_processor::BoxType::None:
+			return "No letterboxing or pillarboxing detected";
+		case app_video_processor::BoxType::Letterbox:
+			return "Letterboxing detected";
+		case app_video_processor::BoxType::Pillarbox:
+			return "Pillarboxing detected";
+		case app_video_processor::BoxType::Windowbox:
+			return "Windowboxing detected";
+		default:
+			return "Unknown";
+		}
+	}
+	struct VideoInfo
+	{
+		cv::VideoCapture capture;
+		int frame_count;
+		double fps;
+		int width;
+		int height;
+
+		std::optional<VideoBounds> bounds;
+		BoxType box_type = BoxType::None;
+	};
+
+	VideoInfo LoadVideoInfo(const std::string &video_path);
+	int GetFrameCountFromInterval(int frame_count, double fps, double interval);
+	int NframesFromInterval(const VideoInfo &video_info, double interval);
+
 	constexpr double kDownScaleFactor = 0.25; // 1/4 size for faster processing
 	constexpr double kMinCropRatio = 0.97;	  // Ignore crops that keep more than 97% of the original frame
+	constexpr int kDefaultThreshold = 16;
+	constexpr double kDefaultMinBlackRatio = 0.98;
+	constexpr int kDefaultSampleFrames = 10;
 
 	std::optional<VideoBounds> DetectBounds(const cv::Mat &frame_grayed,
-											int threshold = 16,
-											double min_black_ratio = 0.98);
-	bool DetermineVideoBounds(const std::string &source,
-							  VideoBounds &bounds,
-							  int n_samples = 10);
+											int threshold = kDefaultThreshold,
+											double min_black_ratio = kDefaultMinBlackRatio);
 	cv::Mat CropImage(const cv::Mat &frame, const VideoBounds &bounds);
+	bool DetermineVideoBounds(VideoInfo &video_info,
+							  VideoBounds &bounds,
+							  int n_samples);
+	void DetectVideoBoxType(VideoInfo &video_info, int n_samples = kDefaultSampleFrames);
 }
 
 #endif

@@ -9,6 +9,30 @@
 
 #include <iostream>
 #include <string>
+#include <thread>
+#include <atomic>
+#include <chrono>
+
+namespace
+{
+    // Global atomic flag to signal spinner to stop
+    std::atomic<bool> spinner_stop(false);
+
+    // Spinner function
+    void spinner(const std::string &prefix)
+    {
+        const std::string spin_chars = "|/-\\";
+        int i = 0;
+        while (!spinner_stop.load())
+        {
+            std::cout << "\r" << prefix << spin_chars[i % spin_chars.size()] << std::flush;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            ++i;
+        }
+        // Clear line when finished
+        std::cout << "\r" << std::string(prefix.size() + 2, ' ') << "\r";
+    }
+}
 
 int main(int argc, char **argv)
 {
@@ -54,64 +78,52 @@ int main(int argc, char **argv)
         if (args.height <= 0)
             args.height = video_info.height; // Use original height if not specified
 
-        spdlog::info("input video: {}", args.input_video_path);
-        spdlog::info("output image: {}", args.output_img_path);
-        spdlog::info("interval: {} seconds", args.interval);
-        spdlog::info("frames to sample: {}", args.nframes);
-        spdlog::info("shape: {}", static_cast<int>(args.shape));
-        spdlog::info("width: {}", args.width);
-        spdlog::info("height: {}", args.height);
-        spdlog::info("trim letterboxing and end credits: {}", args.trim ? "yes" : "no");
+        spdlog::info(
+            "Video processing settings:\n"
+            "   {:15}: {}\n"
+            "   {:15}: {}\n"
+            "   {:15}: {} s\n"
+            "   {:15}: {}\n"
+            "   {:15}: {}",
+            "Input video", args.input_video_path,
+            "Output image", args.output_img_path,
+            "Interval", args.interval,
+            "Frames sample", args.nframes,
+            "Shape", app_parser::ToString(args.shape));
 
-        cv::VideoCapture cap(args.input_video_path);
-        if (!cap.isOpened())
+        // Detect letterbox / pillarbox trimming, if specified
+        spinner_stop.store(false);
+        std::thread spinner_thread(spinner, " Video box info:... ");
+        app_video_processor::DetectVideoBoxType(video_info);
+        int top_bar = 0, bottom_bar = 0, left_bar = 0, right_bar = 0;
+
+        if (video_info.bounds)
         {
-            std::cerr << "Cannot open video: " << args.input_video_path << "\n";
-            return 1;
+            const auto &b = *video_info.bounds;
+            top_bar = b.top;
+            bottom_bar = video_info.height - b.bottom;
+            left_bar = b.left;
+            right_bar = video_info.width - b.right;
         }
 
-        cv::Mat frame;
-        int frame_index = 0;
-
-        while (cap.read(frame))
-        {
-            frame_index++;
-            cv::Mat gray;
-            cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-            auto bounds = app_video_processor::DetectBounds(gray);
-            if (!bounds)
-                continue;
-            std::cout << "Bounds detected on frame " << frame_index << "\n";
-            std::cout << "left=" << bounds->left
-                      << " top=" << bounds->top
-                      << " right=" << bounds->right
-                      << " bottom=" << bounds->bottom
-                      << std::endl;
-            // draw rectangle
-            cv::rectangle(
-                frame,
-                cv::Point(bounds->left, bounds->top),
-                cv::Point(bounds->right, bounds->bottom),
-                cv::Scalar(0, 255, 0),
-                3);
-            // show cropped image too
-            cv::Rect roi(
-                bounds->left,
-                bounds->top,
-                bounds->right - bounds->left,
-                bounds->bottom - bounds->top);
-            cv::Mat cropped = frame(roi);
-            cv::imshow("Detected Frame", frame);
-            cv::imshow("Cropped", cropped);
-
-            cv::waitKey(0);
-            break;
-        }
-
-        if (frame.empty())
-        {
-            std::cout << "No bounds detected in video\n";
-        }
+        int content_w = video_info.width - left_bar - right_bar;
+        int content_h = video_info.height - top_bar - bottom_bar;
+        spinner_stop.store(true);
+        spinner_thread.join();
+        spdlog::info(
+            "Video box info:\n"
+            "   {:<20}: {}\n"
+            "   {:<20}: {}x{}\n"
+            "{}",
+            "Box type", app_video_processor::ToString(video_info.box_type),
+            "Original resolution", video_info.width, video_info.height,
+            video_info.box_type != app_video_processor::BoxType::None
+                ? fmt::format(
+                      "   {:<20}: {}x{}\n"
+                      "   {:<20}: Top={}, Bottom={}, Left={}, Right={}",
+                      "Content resolution", content_w, content_h,
+                      "Bars (pixels)", top_bar, bottom_bar, left_bar, right_bar)
+                : fmt::format("   {:<20}: {}x{}", "Content resolution", content_w, content_h));
     }
     catch (const CLI::ParseError &pe)
     {
