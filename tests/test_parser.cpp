@@ -63,7 +63,7 @@ namespace app_parser
             Parse({"cinebar",
                    temp_video.string(),
                    "--interval", "1",
-                   "--nframes", "100"}),
+                   "--frames", "100"}),
             CLI::ValidationError);
     }
 
@@ -97,7 +97,7 @@ namespace app_parser
     {
         auto result = Parse({"cinebar",
                              temp_video.string(),
-                             "--nframes", "150"});
+                             "--frames", "150"});
 
         EXPECT_EQ(result.nframes, 150);
     }

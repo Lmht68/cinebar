@@ -16,15 +16,18 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            git \
+            build-essential \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            gperf \
             cmake \
             ninja-build \
-            g++ \
-            pkg-config \
+            curl \
             zip \
             unzip \
-            tar \
-            curl
+            tar
 
       - name: Setup vcpkg
         run: |
@@ -34,10 +37,9 @@ jobs:
       - name: Cache vcpkg
         uses: actions/cache@v4
         with:
-          path: |
-            vcpkg/installed
-            vcpkg/packages
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
+          path: ~/.vcpkg-cache
+          key: ${{ runner.os }}-vcpkg-binary-${{ hashFiles('vcpkg.json') }}
+          restore-keys: ${{ runner.os }}-vcpkg-binary-
 
       - name: Install dependencies
         run: ./vcpkg/vcpkg install
