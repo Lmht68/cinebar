@@ -19,37 +19,43 @@ find_package(CLI11 REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(GTest REQUIRED)
 
-# Add source to this project's executable.
-add_executable (cinebar-generator 
-	"src/cinebar-generator.cpp"  
-	"src/logger.h" 
-	"src/logger.cpp"  
-	"src/parser.h" 
-	"src/parser.cpp" 
-	"src/video_processor.h" 
-	"src/video_processor.cpp")
-
-# Install targets.
-target_link_libraries(cinebar-generator PRIVATE
-	spdlog::spdlog
-	CLI11::CLI11
-	${OpenCV_LIBS}
+# Library (shared)
+add_library(cinebar-lib
+    src/video_processor.cpp
+    src/parser.cpp
+    src/logger.cpp
 )
 
-# Add tests
+target_include_directories(cinebar-lib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+target_link_libraries(cinebar-lib PUBLIC
+    spdlog::spdlog
+    CLI11::CLI11
+    ${OpenCV_LIBS}
+)
+
+# Main executable
+add_executable(cinebar-generator
+    src/cinebar-generator.cpp
+)
+
+target_link_libraries(cinebar-generator PRIVATE
+    cinebar-lib
+)
+
+# Tests
 enable_testing()
 
 add_executable(cinebar-generator-tests
-    "tests/test_video_processor.cpp"
-	"tests/test_parser.cpp"
-	"src/video_processor.cpp"
-	"src/parser.cpp"
+    tests/test_video_processor.cpp
+    tests/test_parser.cpp
 )
 
 target_link_libraries(cinebar-generator-tests PRIVATE
+    cinebar-lib
     GTest::gtest_main
-	CLI11::CLI11
-    ${OpenCV_LIBS}
 )
 
 include(GoogleTest)
