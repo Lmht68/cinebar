@@ -99,11 +99,13 @@ int main(int argc, char **argv)
             "   {:<22}: {}\n"
             "   {:<22}: {}\n"
             "   {:<22}: {}\n"
+            "   {:<22}: {}\n"
             "   {:<22}: {}x{}",
             "Input video", args.input_video_path,
             "Output image", args.output_img_path,
             "Sampling interval (s)", args.interval,
             "Frames sampled", args.nframes,
+            "Method", app_parser::ToString(args.method),
             "Shape", app_parser::ToString(args.shape),
             "Stripe width (px)", args.bar_w,
             "Output resolution (px)", args.width, args.height);

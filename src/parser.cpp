@@ -14,6 +14,9 @@ namespace app_parser
 		app.add_option("-o,--output", args.output_img_path, "Output barcode image filename. If not provided, a name will be automatically generated.");
 		auto interval_opt = app.add_option("-i,--interval", args.interval, "Frame sampling interval in seconds")->check(CLI::PositiveNumber);
 		auto nframes_opt = app.add_option("-n,--frames", args.nframes, "Number of frames to sample in the visualization")->check(CLI::PositiveNumber);
+		app.add_option("-m,--method", args.method, "Color extraction method")
+			->transform(CLI::CheckedTransformer(kArgMethodMap))
+			->description("Method: avg | smoothed | kmeans | hsv | stripe");
 		app.add_option("-W,--bar-width", args.bar_w, "Width of each barcode stripe in the output barcode image, in pixels")->check(CLI::PositiveNumber);
 		app.add_option("-H,--height", args.height, "Height of the output barcode image, in pixels")->check(CLI::PositiveNumber);
 		app.add_flag("--circular", [&](std::int64_t)

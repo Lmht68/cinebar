@@ -13,22 +13,57 @@ namespace app_parser
 		Circular
 	};
 
-	inline const char *ToString(app_parser::BarcodeShape shape)
+	inline const char *ToString(BarcodeShape shape)
 	{
 		switch (shape)
 		{
-		case app_parser::BarcodeShape::Horizontal:
+		case BarcodeShape::Horizontal:
 			return "Horizontal";
-		case app_parser::BarcodeShape::Circular:
+		case BarcodeShape::Circular:
 			return "Circular";
 		default:
 			return "Unknown";
 		}
 	}
 
-	const std::map<std::string, app_parser::BarcodeShape> kArgShapeMap{
-		{"horizontal", app_parser::BarcodeShape::Horizontal},
-		{"circular", app_parser::BarcodeShape::Circular}};
+	const std::map<std::string, BarcodeShape> kArgShapeMap{
+		{"horizontal", BarcodeShape::Horizontal},
+		{"circular", BarcodeShape::Circular}};
+
+	enum class Method
+	{
+		Avg,
+		Smoothed,
+		KMeans,
+		HSV,
+		Stripe,
+	};
+
+	inline const char *ToString(Method method)
+	{
+		switch (method)
+		{
+		case Method::Avg:
+			return "Average";
+		case Method::Smoothed:
+			return "Smoothed";
+		case Method::KMeans:
+			return "K-Means";
+		case Method::HSV:
+			return "HSV";
+		case Method::Stripe:
+			return "Stripe";
+		default:
+			return "Unknown";
+		}
+	}
+
+	const std::map<std::string, app_parser::Method> kArgMethodMap{
+		{"avg", app_parser::Method::Avg},
+		{"smoothed", app_parser::Method::Smoothed},
+		{"kmeans", app_parser::Method::KMeans},
+		{"hsv", app_parser::Method::HSV},
+		{"stripe", app_parser::Method::Stripe}};
 
 	struct InputArgs
 	{
@@ -42,6 +77,7 @@ namespace app_parser
 		BarcodeShape shape = BarcodeShape::Horizontal;
 		bool trim = false;
 		bool show_info = false;
+		Method method = Method::Avg;
 	};
 
 	InputArgs ParseArgs(int argc, char **argv);

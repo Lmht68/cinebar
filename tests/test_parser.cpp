@@ -101,4 +101,33 @@ namespace app_parser
 
         EXPECT_EQ(result.nframes, 150);
     }
+
+    TEST_F(ParserTest, MethodOptionParsesCorrectly)
+    {
+        // Test each valid method string
+        std::vector<std::pair<std::string, Method>> test_cases = {
+            {"avg", Method::Avg},
+            {"smoothed", Method::Smoothed},
+            {"kmeans", Method::KMeans},
+            {"hsv", Method::HSV},
+            {"stripe", Method::Stripe}};
+
+        for (const auto &[str, expected] : test_cases)
+        {
+            auto result = Parse({"cinebar",
+                                 temp_video.string(),
+                                 "--method", str});
+
+            EXPECT_EQ(result.method, expected) << "Failed for method string: " << str;
+        }
+    }
+
+    TEST_F(ParserTest, InvalidMethodThrows)
+    {
+        EXPECT_THROW(
+            Parse({"cinebar",
+                   temp_video.string(),
+                   "--method", "invalid_method"}),
+            CLI::ValidationError);
+    }
 }
