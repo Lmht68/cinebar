@@ -140,7 +140,7 @@ void MainWindow::SavePreset() {
 
 void MainWindow::OpenAboutDialog() {
     QMessageBox::about(
-        this, tr("About CineBar"),
+        this, tr("About %1").arg(APP_NAME),
         tr("<b>%1</b><br>"
            "Generate visual color barcodes from movies.<br><br>"
            "<a href='https://github.com/Lmht68/movie-barcode-generator'>"
@@ -150,12 +150,11 @@ void MainWindow::OpenAboutDialog() {
 }
 
 void MainWindow::DisplayImageFile(const QString& file_path) {
-    QPixmap pixmap(file_path);
-
-    if (pixmap.isNull()) {
-        spdlog::warn("Failed to load image from: {}", file_path.toStdString());
+    if (media_format::IsMedia(QFileInfo(file_path).suffix())) {
+        widget_central_->DisplayBarcode("");
+        // TODO: Open input panel for barcode generator
         return;
     }
 
-    widget_central_->DisplayBarcode(pixmap);
+    widget_central_->DisplayBarcode(file_path);
 }

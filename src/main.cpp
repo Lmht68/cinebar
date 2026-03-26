@@ -10,7 +10,6 @@
 #include <QStyleFactory>
 #include <QStyleHints>
 #include <QTextStream>
-#include <opencv2/opencv.hpp>
 
 #include <iostream>
 
@@ -26,7 +25,7 @@ int main(int argc, char *argv[]) {
         try {
             // Init spdlog
             app_logger::InitLogger();
-            spdlog::info("Movie Barcode Generator starting...");
+            spdlog::info("CineBar starting...");
             // Init app style
             app.setStyle(QStyleFactory::create("fusion"));
             // Init main window

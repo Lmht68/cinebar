@@ -106,7 +106,7 @@ namespace app_logger {
 
             // Delete old logs
 #ifndef NDEBUG
-            DeleteOldLogs("logs", std::chrono::hours(1));  // 1 hour for debug builds
+            DeleteOldLogs("logs", std::chrono::seconds(1));
 #else
             DeleteOldLogs("logs",
                           std::chrono::hours(24 * 7));  // 7 days for release builds
