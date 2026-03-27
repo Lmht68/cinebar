@@ -2,7 +2,7 @@
 
 namespace app_frame_extractor
 {
-    cv::Mat ExtractColorStripe(const cv::Mat &frame, int width)
+    cv::Mat ExtractFrameStripe(const cv::Mat &frame, int width)
     {
         cv::Mat stripe;
         cv::resize(frame, stripe, cv::Size(width, frame.rows), 0, 0, cv::INTER_AREA);
@@ -72,5 +72,18 @@ namespace app_frame_extractor
         cv::cvtColor(color_hsv, color_bgr, cv::COLOR_HSV2BGR);
 
         return color_bgr.at<cv::Vec3b>(0, 0);
+    }
+
+    ColorFunc getColorFunction(app_parser::Method method)
+    {
+        auto it = kColorExtractorMap.find(method);
+        if (it != kColorExtractorMap.end())
+            return it->second;
+        throw std::invalid_argument("frame_extractor: Invalid extraction method");
+    }
+
+    StripeFunc getStripeFunction()
+    {
+        return ExtractFrameStripe;
     }
 }
