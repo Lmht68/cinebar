@@ -20,13 +20,13 @@ namespace app_frame_extractor
 
     using ColorFunc = cv::Vec3b (*)(const cv::Mat &);
     using StripeFunc = cv::Mat (*)(const cv::Mat &, int);
-    const std::map<app_parser::Method, ColorFunc> kColorExtractorMap{
-        {app_parser::Method::Avg, ExtractColorMean},
-        {app_parser::Method::Smoothed, ExtractSmoothedColor},
-        {app_parser::Method::KMeans, ExtractColorkMeans},
-        {app_parser::Method::HSV, ExtractDominantHue}};
+    const std::map<cinebar::Method, ColorFunc> kColorExtractorMap{
+        {cinebar::Method::Avg, ExtractColorMean},
+        {cinebar::Method::Smoothed, ExtractSmoothedColor},
+        {cinebar::Method::KMeans, ExtractColorkMeans},
+        {cinebar::Method::HSV, ExtractDominantHue}};
 
-    ColorFunc getColorFunction(app_parser::Method method);
+    ColorFunc getColorFunction(cinebar::Method method);
     StripeFunc getStripeFunction();
 }
 

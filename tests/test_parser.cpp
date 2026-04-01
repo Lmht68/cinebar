@@ -29,7 +29,7 @@ namespace app_parser
                 fs::remove(temp_video);
         }
 
-        InputArgs Parse(const std::vector<std::string> &args)
+        cinebar::InputArgs Parse(const std::vector<std::string> &args)
         {
             std::vector<char *> argv;
             argv.reserve(args.size());

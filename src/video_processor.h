@@ -73,10 +73,10 @@ namespace app_video_processor
 							  VideoBounds &bounds);
 	void DetectVideoBoxType(VideoInfo &video_info);
 
-	std::vector<cv::Vec3b> ExtractColors(const app_parser::InputArgs &args,
+	std::vector<cv::Vec3b> ExtractColors(const cinebar::InputArgs &args,
 										 const VideoInfo &video_info,
 										 const app_frame_extractor::ColorFunc &extractor);
-	std::vector<cv::Mat> ExtractStripes(const app_parser::InputArgs &args,
+	std::vector<cv::Mat> ExtractStripes(const cinebar::InputArgs &args,
 										const VideoInfo &video_info);
 }
 

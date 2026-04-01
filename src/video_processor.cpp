@@ -260,7 +260,7 @@ namespace app_video_processor
     // ---
 
     std::vector<cv::Vec3b> ExtractColors(
-        const app_parser::InputArgs &args,
+        const cinebar::InputArgs &args,
         const VideoInfo &video_info,
         const app_frame_extractor::ColorFunc &extractor)
     {
@@ -313,7 +313,7 @@ namespace app_video_processor
     }
 
     std::vector<cv::Mat> ExtractStripes(
-        const app_parser::InputArgs &args,
+        const cinebar::InputArgs &args,
         const VideoInfo &video_info)
     {
         auto indices = ComputeFrameIndices(
