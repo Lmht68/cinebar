@@ -131,13 +131,13 @@ int main(int argc, char **argv)
             {
                 const auto &b = *video_info.bounds;
                 top_bar = b.top;
-                bottom_bar = video_info.height - b.bottom;
+                bottom_bar = static_cast<int>(video_info.height) - b.bottom;
                 left_bar = b.left;
-                right_bar = video_info.width - b.right;
+                right_bar = static_cast<int>(video_info.width) - b.right;
             }
 
-            int content_w = video_info.width - left_bar - right_bar;
-            int content_h = video_info.height - top_bar - bottom_bar;
+            int content_w = static_cast<int>(video_info.width) - left_bar - right_bar;
+            int content_h = static_cast<int>(video_info.height) - top_bar - bottom_bar;
             spinner_stop.store(true);
             spinner_thread.join();
             spdlog::info(
@@ -154,30 +154,26 @@ int main(int argc, char **argv)
                     : fmt::format("   {:<22}: {}x{}", "Content resolution", content_w, content_h));
         }
 
-        if (args.end_frame == -1)
-            args.end_frame = video_info.frame_count - 1; // Ensure end_frame is set to the last frame if it was -1
-
-        int n_workers_avail = std::thread::hardware_concurrency();
-        if (args.workers > n_workers_avail)
-            args.workers = n_workers_avail;
+        if (args.end_frame == 0)
+            args.end_frame = video_info.frame_count - 1; // Ensure end_frame is set to the last frame if it was 0
 
         spinner_stop.store(false);
         std::thread spinner_thread(
             spinner,
-            std::string(" Generating cinebar using ") +
-                std::to_string(args.workers) +
-                " threads: Extracting frames...");
+            std::string(" Extracting frames..."));
         cv::Mat barcode;
 
         if (args.method == cinebar_types::Method::Stripe)
         {
-            auto stripes = app_video_processor::ExtractStripes(args, video_info);
+            std::vector<cv::Mat> stripes;
+            stripes = app_video_processor::ExtractStripes(args, video_info);
             barcode = cinebar::BuildHorizontalBarcodeFromStripes(stripes); // stripes only have horizontal barcode shape
         }
         else
         {
             auto extractor = app_frame_extractor::getColorFunction(args.method);
-            auto colors = app_video_processor::ExtractColors(args, video_info, extractor);
+            std::vector<cv::Vec3b> colors;
+            colors = app_video_processor::ExtractColors(args, video_info, extractor);
 
             if (args.shape == cinebar_types::BarcodeShape::Horizontal)
             {
