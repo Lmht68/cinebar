@@ -16,20 +16,23 @@ namespace app_video_processor
 	constexpr int kDefaultSampleFrames = 10;
 
 	cinebar_types::VideoInfo LoadVideoInfo(const std::string &video_path);
-	int GetFrameCountFromInterval(int frame_count, double fps, double interval);
-	int NframesFromInterval(const cinebar_types::VideoInfo &video_info, double interval);
-
+	size_t GetFrameCountFromInterval(const size_t frame_count,
+									 const double fps,
+									 const double interval);
+	size_t NframesFromInterval(const cinebar_types::VideoInfo &video_info,
+							   const double interval);
 	std::optional<cinebar_types::VideoBounds> DetectBounds(const cv::Mat &frame_grayed);
-	cv::Mat CropImage(const cv::Mat &frame, const cinebar_types::VideoBounds &bounds);
+	void CropImage(cv::Mat &frame,
+				   const cinebar_types::VideoBounds &bounds);
 	bool DetermineVideoBounds(cinebar_types::VideoInfo &video_info,
 							  cinebar_types::VideoBounds &bounds);
 	void DetectVideoBoxType(cinebar_types::VideoInfo &video_info);
 
 	std::vector<cv::Vec3b> ExtractColors(const cinebar_types::InputArgs &args,
-										 const cinebar_types::VideoInfo &video_info,
+										 cinebar_types::VideoInfo &video_info,
 										 const app_frame_extractor::ColorFunc &extractor);
 	std::vector<cv::Mat> ExtractStripes(const cinebar_types::InputArgs &args,
-										const cinebar_types::VideoInfo &video_info);
+										cinebar_types::VideoInfo &video_info);
 }
 
 #endif

@@ -2,50 +2,7 @@
 
 #include <opencv2/opencv.hpp>
 
-#include <stdexcept>
-#include <cmath>
-#include <filesystem>
-
-namespace
-{
-    std::vector<int> ComputeFrameIndices(int start_frame, int end_frame, int n_frames)
-    {
-        std::vector<int> indices;
-        if (start_frame > end_frame || n_frames <= 0)
-            return indices;
-        int total = end_frame - start_frame + 1;
-
-        if (n_frames >= total)
-        {
-            indices.reserve(total);
-            for (int i = start_frame; i <= end_frame; ++i)
-                indices.push_back(i);
-            return indices;
-        }
-
-        indices.reserve(n_frames);
-
-        if (n_frames == 1)
-        {
-            indices.push_back(start_frame);
-            return indices;
-        }
-
-        for (int i = 0; i < n_frames; ++i)
-        {
-            double alpha = static_cast<double>(i) / (n_frames - 1);
-            int idx = static_cast<int>(
-                std::round(start_frame + alpha * (total - 1)));
-            if (idx < start_frame)
-                idx = start_frame;
-            if (idx > end_frame)
-                idx = end_frame;
-            indices.push_back(idx);
-        }
-
-        return indices;
-    }
-}
+#include <vector>
 
 namespace app_video_processor
 {
@@ -57,17 +14,17 @@ namespace app_video_processor
         if (!video.isOpened())
             throw std::runtime_error("video_processor: Input video not found: " + video_path);
 
-        int frame_count = static_cast<int>(video.get(cv::CAP_PROP_FRAME_COUNT));
+        size_t frame_count = static_cast<size_t>(video.get(cv::CAP_PROP_FRAME_COUNT));
         double fps = video.get(cv::CAP_PROP_FPS);
         double duration = frame_count / fps;
         auto size = std::filesystem::file_size(video_path);
-        int width = static_cast<int>(video.get(cv::CAP_PROP_FRAME_WIDTH));
-        int height = static_cast<int>(video.get(cv::CAP_PROP_FRAME_HEIGHT));
+        size_t width = static_cast<size_t>(video.get(cv::CAP_PROP_FRAME_WIDTH));
+        size_t height = static_cast<size_t>(video.get(cv::CAP_PROP_FRAME_HEIGHT));
 
         return {std::move(video), fps, duration, size, frame_count, width, height};
     }
 
-    int GetFrameCountFromInterval(int frame_count, double fps, double interval)
+    size_t GetFrameCountFromInterval(const size_t frame_count, const double fps, const double interval)
     {
         if (interval <= 0.0)
             throw std::invalid_argument("video_processor: Interval must be greater than 0");
@@ -82,10 +39,10 @@ namespace app_video_processor
             throw std::runtime_error("video_processor: Invalid frame count value");
 
         double duration = frame_count / fps;
-        return static_cast<int>(std::round(duration / interval));
+        return static_cast<size_t>(std::round(duration / interval));
     }
 
-    int NframesFromInterval(const cinebar_types::VideoInfo &video_info, double interval)
+    size_t NframesFromInterval(const cinebar_types::VideoInfo &video_info, const double interval)
     {
         if (interval <= 0.0)
             throw std::invalid_argument("video_processor: Interval must be greater than 0");
@@ -163,7 +120,7 @@ namespace app_video_processor
         return bounds;
     }
 
-    cv::Mat CropImage(const cv::Mat &frame, const cinebar_types::VideoBounds &bounds)
+    void CropImage(cv::Mat &frame, const cinebar_types::VideoBounds &bounds)
     {
         cv::Rect roi(
             bounds.left,
@@ -171,15 +128,14 @@ namespace app_video_processor
             bounds.right - bounds.left,
             bounds.bottom - bounds.top);
 
-        return frame(roi);
+        frame = frame(roi);
     }
 
     bool DetermineVideoBounds(cinebar_types::VideoInfo &video_info,
                               cinebar_types::VideoBounds &bounds)
     {
         cv::VideoCapture &cap = video_info.capture;
-        int total_frames = video_info.frame_count;
-        double interval = static_cast<double>(total_frames) / kDefaultSampleFrames;
+        double interval = static_cast<double>(video_info.frame_count) / kDefaultSampleFrames;
         std::vector<cinebar_types::VideoBounds> detections;
         cv::Mat frame;
 
@@ -187,10 +143,8 @@ namespace app_video_processor
         {
             int frame_id = static_cast<int>((i + 0.5) * interval);
             cap.set(cv::CAP_PROP_POS_FRAMES, frame_id);
-
             if (!cap.read(frame))
                 continue;
-
             cv::Mat gray;
             cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
             auto detected = DetectBounds(gray);
@@ -261,52 +215,44 @@ namespace app_video_processor
 
     std::vector<cv::Vec3b> ExtractColors(
         const cinebar_types::InputArgs &args,
-        const cinebar_types::VideoInfo &video_info,
+        cinebar_types::VideoInfo &video_info,
         const app_frame_extractor::ColorFunc &extractor)
     {
-        auto indices = ComputeFrameIndices(
-            args.start_frame,
-            args.end_frame,
-            args.nframes);
-        std::vector<cv::Vec3b> colors(indices.size());
-        cv::VideoCapture cap(args.input_video_path);
+        cv::VideoCapture &cap = video_info.capture;
+        const bool do_trim = args.trim && video_info.bounds;
 
         if (!cap.isOpened())
-        {
             throw std::runtime_error("video_processor: Failed to open video");
-        }
 
-        int current = 0;
-        int target_idx = 0;
+        cap.set(cv::CAP_PROP_POS_FRAMES, static_cast<double>(args.start_frame));
+        const size_t segment_length = args.end_frame - args.start_frame + 1;
+        const size_t step = segment_length / args.nframes;
+        std::vector<cv::Vec3b> colors;
+        colors.reserve(args.nframes);
         cv::Mat frame;
+        size_t current = args.start_frame;
 
-        while (target_idx < static_cast<int>(indices.size()))
+        while (current <= args.end_frame)
         {
-            int next_needed = indices[target_idx];
-
-            // Skip frames
-            if (current < next_needed)
-            {
-                if (!cap.grab())
-                    break;
-                current++;
-                continue;
-            }
-
-            // Read only needed frame
             if (!cap.read(frame))
+                throw std::runtime_error("video_processor: Failed to read frame");
+
+            if (do_trim)
+                CropImage(frame, *video_info.bounds);
+
+            colors.push_back(extractor(frame));
+            ++current;
+
+            if (colors.size() >= args.nframes)
                 break;
 
-            cv::Mat processed = frame;
-
-            if (args.trim && video_info.bounds)
+            for (int i = 0; i < step - 1 && current < args.end_frame; ++i)
             {
-                processed = CropImage(processed, *video_info.bounds);
-            }
+                if (!cap.grab())
+                    throw std::runtime_error("video_processor: Failed to grab frame");
 
-            colors[target_idx] = extractor(processed);
-            target_idx++;
-            current++;
+                ++current;
+            }
         }
 
         return colors;
@@ -314,52 +260,45 @@ namespace app_video_processor
 
     std::vector<cv::Mat> ExtractStripes(
         const cinebar_types::InputArgs &args,
-        const cinebar_types::VideoInfo &video_info)
+        cinebar_types::VideoInfo &video_info)
     {
-        auto indices = ComputeFrameIndices(
-            args.start_frame,
-            args.end_frame,
-            args.nframes);
-        std::vector<cv::Mat> stripes(indices.size());
-        auto extractor = app_frame_extractor::getStripeFunction();
-        cv::VideoCapture cap(args.input_video_path);
+        cv::VideoCapture &cap = video_info.capture;
+        const bool do_trim = args.trim && video_info.bounds;
 
         if (!cap.isOpened())
-        {
             throw std::runtime_error("video_processor: Failed to open video");
-        }
 
-        int current = 0;
-        int target_idx = 0;
+        cap.set(cv::CAP_PROP_POS_FRAMES, static_cast<double>(args.start_frame));
+        const size_t segment_length = args.end_frame - args.start_frame + 1;
+        const size_t step = segment_length / args.nframes;
+        std::vector<cv::Mat> stripes;
+        stripes.reserve(args.nframes);
+        auto extractor = app_frame_extractor::getStripeFunction();
         cv::Mat frame;
+        size_t current = args.start_frame;
 
-        while (target_idx < static_cast<int>(indices.size()))
+        while (current <= args.end_frame)
         {
-            int next_needed = indices[target_idx];
-
-            // Skip frames
-            if (current < next_needed)
-            {
-                if (!cap.grab())
-                    break;
-                current++;
-                continue;
-            }
-
-            // Decode only when needed
             if (!cap.read(frame))
+                throw std::runtime_error("video_processor: Failed to read frame");
+
+            if (do_trim)
+                CropImage(frame, *video_info.bounds);
+
+            stripes.push_back(extractor(frame, args.bar_w));
+            ++current;
+
+            if (stripes.size() >= args.nframes)
                 break;
 
-            cv::Mat processed = frame;
-
-            if (args.trim && video_info.bounds)
+            // skip (step - 1) frames
+            for (int i = 0; i < step - 1 && current < args.end_frame; ++i)
             {
-                processed = CropImage(processed, *video_info.bounds);
-            }
+                if (!cap.grab())
+                    throw std::runtime_error("video_processor: Failed to grab frame");
 
-            stripes[target_idx] = extractor(processed, args.bar_w);
-            target_idx++;
-            current++;
+                ++current;
+            }
         }
 
         return stripes;

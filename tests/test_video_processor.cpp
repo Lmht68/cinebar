@@ -61,7 +61,7 @@ namespace app_video_processor
         // 300 frames at 30 fps = 10 seconds
         // interval = 2 seconds
         // expected = round(10 / 2) = 5
-        int result = GetFrameCountFromInterval(300, 30.0, 2.0);
+        size_t result = GetFrameCountFromInterval(300, 30.0, 2.0);
         EXPECT_EQ(result, 5);
     }
 
@@ -70,7 +70,7 @@ namespace app_video_processor
         // 100 frames at 30 fps = 3.3333 sec
         // interval = 1 sec
         // 3.3333 -> round -> 3
-        int result = GetFrameCountFromInterval(100, 30.0, 1.0);
+        size_t result = GetFrameCountFromInterval(100, 30.0, 1.0);
         EXPECT_EQ(result, 3);
     }
 
@@ -164,10 +164,10 @@ namespace app_video_processor
         cv::Mat img(100, 200, CV_8UC1, cv::Scalar(255));
         cinebar_types::VideoBounds bounds{10, 20, 110, 80};
 
-        cv::Mat cropped = CropImage(img, bounds);
+        CropImage(img, bounds);
 
-        EXPECT_EQ(cropped.cols, 100);
-        EXPECT_EQ(cropped.rows, 60);
+        EXPECT_EQ(img.cols, 100);
+        EXPECT_EQ(img.rows, 60);
     }
 
     TEST(CropImageTest, PreservesPixels)
@@ -179,10 +179,10 @@ namespace app_video_processor
                 img.at<uchar>(y, x) = x;
 
         cinebar_types::VideoBounds bounds{50, 10, 100, 60};
-        cv::Mat cropped = CropImage(img, bounds);
+        CropImage(img, bounds);
 
-        EXPECT_EQ(cropped.at<uchar>(0, 0), 50);
-        EXPECT_EQ(cropped.at<uchar>(0, 10), 60);
+        EXPECT_EQ(img.at<uchar>(0, 0), 50);
+        EXPECT_EQ(img.at<uchar>(0, 10), 60);
     }
 
     TEST(DetectBoundsTest, SingleFrameLetterbox)

@@ -1,5 +1,4 @@
 ﻿#include "cinebar_generator.h"
-#include "parser.h"
 
 namespace cinebar
 {
