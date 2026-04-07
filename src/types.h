@@ -73,23 +73,16 @@ namespace cinebar_types
         std::string input_video_path;
         std::string output_img_path;
         double interval = 0.0;
-        int nframes = 0;
-        int bar_w = 1;
-        int width = 0;
-        int height = 0;
-        int start_frame = 0;
-        int end_frame = -1; // -1 means till the end of the video
+        size_t nframes = 0;
+        size_t bar_w = 1;
+        size_t width = 0;
+        size_t height = 0;
+        size_t start_frame = 0;
+        size_t end_frame = 0;
         BarcodeShape shape = BarcodeShape::Horizontal;
         bool trim = false;
         bool show_info = false;
         Method method = Method::Avg;
-        int workers = 1;
-        int bound_top = 0;
-        int bound_bottom = 0;
-        int bound_left = 0;
-        int bound_right = 0;
-        bool worker_mode = false; // Internal flag to indicate running in worker mode (not exposed to users)
-        int worker_id = 0;        // Internal worker ID for worker mode (not exposed to users)
     };
 
     // Represents the detected bounds of the actual video content, excluding letterboxing
@@ -132,9 +125,9 @@ namespace cinebar_types
         double fps;
         double duration;
         std::uintmax_t size;
-        int frame_count;
-        int width;
-        int height;
+        size_t frame_count;
+        size_t width;
+        size_t height;
         std::optional<VideoBounds> bounds;
         BoxType box_type = BoxType::None;
     };
