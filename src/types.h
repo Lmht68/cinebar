@@ -38,6 +38,7 @@ namespace cinebar_types
         Avg,
         Smoothed,
         KMeans,
+        Hist,
         HSV,
         Stripe,
     };
@@ -47,11 +48,13 @@ namespace cinebar_types
         switch (method)
         {
         case Method::Avg:
-            return "Average";
+            return "Avg";
         case Method::Smoothed:
             return "Smoothed";
         case Method::KMeans:
-            return "K-Means";
+            return "KMeans";
+        case Method::Hist:
+            return "Hist";
         case Method::HSV:
             return "HSV";
         case Method::Stripe:
@@ -65,6 +68,7 @@ namespace cinebar_types
         {"avg", Method::Avg},
         {"smoothed", Method::Smoothed},
         {"kmeans", Method::KMeans},
+        {"hist", Method::Hist},
         {"hsv", Method::HSV},
         {"stripe", Method::Stripe}};
 
