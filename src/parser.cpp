@@ -28,6 +28,8 @@ namespace app_parser
 
 		if (args.start_frame > 0 || args.end_frame > 0)
 		{
+			if (args.end_frame < args.start_frame)
+				throw CLI::ValidationError("parser: End frame cannot be less than start frame");
 			args.segment_nframes = args.end_frame - args.start_frame + 1;
 		}
 		else
@@ -37,26 +39,16 @@ namespace app_parser
 		if (args.nframes > 0)
 		{
 			if (args.interval > 0.0)
-			{
 				throw CLI::ValidationError(
 					"parser: Sampling options conflict: choose either --interval (time-based) or --nframes (fixed-count), but not both");
-			}
 			if (args.segment_nframes > 0 && args.nframes > args.segment_nframes)
-			{
 				throw CLI::ValidationError(
 					"parser: Number of frames to sample cannot exceed the total number of frames in the specified segment");
-			}
 		}
 		if (!args.show_info && args.input_video_path.empty())
-		{
 			throw CLI::RequiredError("Input video");
-		}
 		if (args.output_img_path.empty())
-		{
-			args.output_img_path = std::filesystem::path(args.input_video_path)
-									   .replace_extension(".png")
-									   .string();
-		}
+			args.output_img_path = std::filesystem::path(args.input_video_path).replace_extension(".png").string();
 
 		return args;
 	}
