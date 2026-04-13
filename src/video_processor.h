@@ -7,6 +7,8 @@
 
 #include <opencv2/videoio.hpp>
 
+#include <atomic>
+
 namespace app_video_processor
 {
 	constexpr double kDownScaleFactor = 0.25; // 1/4 size for faster processing

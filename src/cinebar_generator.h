@@ -5,6 +5,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <atomic>
+
 namespace cinebar
 {
     cv::Mat BuildHorizontalBarcode(const std::vector<cv::Vec3b> &colors,
