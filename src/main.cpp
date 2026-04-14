@@ -42,6 +42,8 @@ namespace
         bar.set_progress(current);
         bar.set_option(option::PostfixText{
             std::to_string(current) + "/" + std::to_string(total)});
+        if (current == total)
+            bar.set_option(option::ForegroundColor{Color::green});
     }
 
     std::thread StartProgressJob(BlockProgressBar &bar,
@@ -59,14 +61,6 @@ namespace
 
             // final update
             UpdateProgressBar(bar, total, total);
-
-            if (current.load() == total)
-            {
-                bar.set_option(option::ForegroundColor{Color::green});
-            } else {
-                bar.set_option(option::ForegroundColor{Color::red});
-            }
-
             bar.mark_as_completed();
             show_console_cursor(true); });
     }
