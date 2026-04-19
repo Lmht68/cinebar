@@ -1,7 +1,8 @@
 # Cinebar
 
-**CineBar** is a **Movie Barcode Generator** - a CLI tool that generates visual barcodes from movies by sampling frames across the film’s duration.
+**Cinebar** is a command-line movie barcode generator that creates visual summaries of films by sampling frames across their duration.
 
-[Cinebar GUI](https://github.com/Lmht68/cinebar)
+- 📖 [Documentation](https://lmht68.github.io/cinebar)
+- 🖥️ [Cinebar GUI](https://github.com/Lmht68/cinebar)
 
 ---
